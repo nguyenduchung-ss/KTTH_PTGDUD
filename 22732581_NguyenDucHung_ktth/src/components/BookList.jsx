@@ -1,4 +1,6 @@
+// components/BookList.jsx
 import React, { useState, useEffect } from 'react'
+import BookItem from './BookItem'
 
 const LOCAL_KEY = "book_list"
 
@@ -39,14 +41,31 @@ const BookList = () => {
       alert("Vui lòng nhập đầy đủ thông tin!")
       return
     }
-    const newId = books.length > 0 ? books[books.length - 1].id + 1 : 1
-    const bookToAdd = { ...newBook, id: newId, year: parseInt(newBook.year) }
-    setBooks(prev => [...prev, bookToAdd])
+
+    const isEditing = newBook.id !== undefined
+
+    if (isEditing) {
+      setBooks(prev =>
+        prev.map(book =>
+          book.id === newBook.id ? { ...newBook, year: parseInt(newBook.year) } : book
+        )
+      )
+    } else {
+      const newId = books.length > 0 ? books[books.length - 1].id + 1 : 1
+      const bookToAdd = { ...newBook, id: newId, year: parseInt(newBook.year) }
+      setBooks(prev => [...prev, bookToAdd])
+    }
+
     setNewBook({ title: '', author: '', genre: '', year: '' })
   }
 
   const handleDelete = (id) => {
     setBooks(books.filter(book => book.id !== id))
+  }
+
+  const handleEdit = (book) => {
+    setNewBook(book)
+    window.scrollTo({ top: 0, behavior: 'smooth' }) // Optional UX improvement
   }
 
   const handleSearchChange = (e) => {
@@ -92,7 +111,7 @@ const BookList = () => {
         </select>
       </div>
 
-      <h2 className="text-xl font-semibold mb-3">Thêm sách mới</h2>
+      <h2 className="text-xl font-semibold mb-3">{newBook.id ? "Chỉnh sửa sách" : "Thêm sách mới"}</h2>
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 mb-4">
         <input
           type="text"
@@ -131,12 +150,10 @@ const BookList = () => {
         onClick={handleAddBook}
         className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mb-6"
       >
-        Thêm sách
+        {newBook.id ? "Cập nhật" : "Thêm sách"}
       </button>
 
       <h2 className="text-xl font-semibold mb-2">Danh sách sách</h2>
-
-      {/* ✅ Hiển thị tổng số sách */}
       <p className="mb-2 text-gray-600">Tổng số sách: <strong>{filteredBooks.length}</strong></p>
 
       <table className="w-full text-left border-collapse">
@@ -151,24 +168,18 @@ const BookList = () => {
         </thead>
         <tbody>
           {filteredBooks.map(book => (
-            <tr key={book.id} className="border-b hover:bg-gray-50">
-              <td className="p-2">{book.title}</td>
-              <td className="p-2">{book.author}</td>
-              <td className="p-2">{book.genre}</td>
-              <td className="p-2">{book.year}</td>
-              <td className="p-2">
-                <button
-                  onClick={() => handleDelete(book.id)}
-                  className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
-                >
-                  Xoá
-                </button>
-              </td>
-            </tr>
+            <BookItem
+              key={book.id}
+              book={book}
+              onDelete={handleDelete}
+              onEdit={handleEdit}
+            />
           ))}
           {filteredBooks.length === 0 && (
             <tr>
-              <td colSpan="5" className="text-center py-4 text-gray-500">Không tìm thấy sách nào.</td>
+              <td colSpan="5" className="text-center py-4 text-gray-500">
+                Không tìm thấy sách nào.
+              </td>
             </tr>
           )}
         </tbody>

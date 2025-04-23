@@ -6,9 +6,10 @@ const initialBooks = [
   { id: 1, title: "Đắc nhân tâm", author: "Dale Carnegie", genre: "Kỹ năng sống", year: 1936 },
   { id: 2, title: "Dế mèn phiêu lưu ký", author: "Tô Hoài", genre: "Văn học thiếu nhi", year: 1941 },
   { id: 3, title: "Lão Hạc", author: "Nam Cao", genre: "Văn học hiện thực", year: 1943 },
+  { id: 4, title: "Sapiens", author: "Yuval Noah Harari", genre: "Khoa học", year: 2011 },
+  { id: 5, title: "Tâm lý học tội phạm", author: "David Canter", genre: "Tâm lý", year: 2008 },
 ]
 
-// Hàm tải dữ liệu từ localStorage
 const loadBooksFromLocalStorage = () => {
   const data = localStorage.getItem(LOCAL_KEY)
   return data ? JSON.parse(data) : []
@@ -22,6 +23,7 @@ const BookList = () => {
 
   const [newBook, setNewBook] = useState({ title: '', author: '', genre: '', year: '' })
   const [searchText, setSearchText] = useState('')
+  const [selectedGenre, setSelectedGenre] = useState("Tất cả")
 
   useEffect(() => {
     localStorage.setItem(LOCAL_KEY, JSON.stringify(books))
@@ -51,20 +53,44 @@ const BookList = () => {
     setSearchText(e.target.value)
   }
 
-  const filteredBooks = books.filter(book =>
-    book.title.toLowerCase().includes(searchText.toLowerCase())
-  )
+  const handleGenreChange = (e) => {
+    setSelectedGenre(e.target.value)
+  }
+
+  const filteredBooks = books.filter(book => {
+    const matchTitle = book.title.toLowerCase().includes(searchText.toLowerCase())
+    const matchGenre = selectedGenre === "Tất cả" || book.genre === selectedGenre
+    return matchTitle && matchGenre
+  })
 
   return (
     <div className="bg-white shadow-md rounded p-4 max-w-5xl mx-auto mt-6">
-      <h2 className="text-xl font-semibold mb-3">Tìm kiếm sách</h2>
+      <h2 className="text-2xl font-semibold mb-3">Tìm kiếm & Lọc sách</h2>
       <input
         type="text"
         placeholder="Nhập tên sách để tìm..."
         value={searchText}
         onChange={handleSearchChange}
-        className="w-full border p-2 rounded mb-6"
+        className="w-full border p-2 rounded mb-4"
       />
+
+      <div className="mb-6">
+        <label className="font-medium mr-2">Lọc theo thể loại:</label>
+        <select
+          value={selectedGenre}
+          onChange={handleGenreChange}
+          className="border p-2 rounded"
+        >
+          <option value="Tất cả">Tất cả</option>
+          <option value="Văn học">Văn học</option>
+          <option value="Văn học thiếu nhi">Văn học thiếu nhi</option>
+          <option value="Văn học hiện thực">Văn học hiện thực</option>
+          <option value="Kỹ năng sống">Kỹ năng sống</option>
+          <option value="Tâm lý">Tâm lý</option>
+          <option value="Khoa học">Khoa học</option>
+          <option value="Công nghệ">Công nghệ</option>
+        </select>
+      </div>
 
       <h2 className="text-xl font-semibold mb-3">Thêm sách mới</h2>
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 mb-4">

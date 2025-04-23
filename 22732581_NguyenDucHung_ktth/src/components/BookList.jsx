@@ -135,6 +135,10 @@ const BookList = () => {
       </button>
 
       <h2 className="text-xl font-semibold mb-2">Danh sách sách</h2>
+
+      {/* ✅ Hiển thị tổng số sách */}
+      <p className="mb-2 text-gray-600">Tổng số sách: <strong>{filteredBooks.length}</strong></p>
+
       <table className="w-full text-left border-collapse">
         <thead>
           <tr className="bg-gray-200">

@@ -1,8 +1,7 @@
-// components/BookList.jsx
 import React, { useState, useEffect } from 'react'
 import BookItem from './BookItem'
 
-const LOCAL_KEY = "book_list"
+const LOCAL_KEY = 'book_list'
 
 const initialBooks = [
   { id: 1, title: "Đắc nhân tâm", author: "Dale Carnegie", genre: "Kỹ năng sống", year: 1936 },
@@ -41,21 +40,9 @@ const BookList = () => {
       alert("Vui lòng nhập đầy đủ thông tin!")
       return
     }
-
-    const isEditing = newBook.id !== undefined
-
-    if (isEditing) {
-      setBooks(prev =>
-        prev.map(book =>
-          book.id === newBook.id ? { ...newBook, year: parseInt(newBook.year) } : book
-        )
-      )
-    } else {
-      const newId = books.length > 0 ? books[books.length - 1].id + 1 : 1
-      const bookToAdd = { ...newBook, id: newId, year: parseInt(newBook.year) }
-      setBooks(prev => [...prev, bookToAdd])
-    }
-
+    const newId = books.length > 0 ? books[books.length - 1].id + 1 : 1
+    const bookToAdd = { ...newBook, id: newId, year: parseInt(newBook.year) }
+    setBooks(prev => [...prev, bookToAdd])
     setNewBook({ title: '', author: '', genre: '', year: '' })
   }
 
@@ -65,7 +52,6 @@ const BookList = () => {
 
   const handleEdit = (book) => {
     setNewBook(book)
-    window.scrollTo({ top: 0, behavior: 'smooth' }) // Optional UX improvement
   }
 
   const handleSearchChange = (e) => {
@@ -83,107 +69,117 @@ const BookList = () => {
   })
 
   return (
-    <div className="bg-white shadow-md rounded p-4 max-w-5xl mx-auto mt-6">
-      <h2 className="text-2xl font-semibold mb-3">Tìm kiếm & Lọc sách</h2>
-      <input
-        type="text"
-        placeholder="Nhập tên sách để tìm..."
-        value={searchText}
-        onChange={handleSearchChange}
-        className="w-full border p-2 rounded mb-4"
-      />
+    <div className="max-w-6xl mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6 text-center text-blue-700">Quản lý sách</h1>
 
-      <div className="mb-6">
-        <label className="font-medium mr-2">Lọc theo thể loại:</label>
-        <select
-          value={selectedGenre}
-          onChange={handleGenreChange}
-          className="border p-2 rounded"
+      {/* Search & Filter */}
+      <div className="mb-6 bg-gray-50 p-4 rounded shadow">
+        <h2 className="text-xl font-semibold mb-3">🔍 Tìm kiếm & Lọc sách</h2>
+        <input
+          type="text"
+          placeholder="Nhập tên sách để tìm..."
+          value={searchText}
+          onChange={handleSearchChange}
+          className="w-full border p-2 rounded mb-4"
+        />
+        <div>
+          <label className="mr-2 font-medium">Thể loại:</label>
+          <select
+            value={selectedGenre}
+            onChange={handleGenreChange}
+            className="border p-2 rounded"
+          >
+            <option value="Tất cả">Tất cả</option>
+            <option value="Văn học">Văn học</option>
+            <option value="Văn học thiếu nhi">Văn học thiếu nhi</option>
+            <option value="Văn học hiện thực">Văn học hiện thực</option>
+            <option value="Kỹ năng sống">Kỹ năng sống</option>
+            <option value="Tâm lý">Tâm lý</option>
+            <option value="Khoa học">Khoa học</option>
+            <option value="Công nghệ">Công nghệ</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Add book */}
+      <div className="mb-8 bg-white p-4 rounded shadow">
+        <h2 className="text-xl font-semibold mb-3">➕ Thêm sách mới</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-4">
+          <input
+            type="text"
+            name="title"
+            placeholder="Tên sách"
+            value={newBook.title}
+            onChange={handleChange}
+            className="border p-2 rounded"
+          />
+          <input
+            type="text"
+            name="author"
+            placeholder="Tác giả"
+            value={newBook.author}
+            onChange={handleChange}
+            className="border p-2 rounded"
+          />
+          <input
+            type="text"
+            name="genre"
+            placeholder="Thể loại"
+            value={newBook.genre}
+            onChange={handleChange}
+            className="border p-2 rounded"
+          />
+          <input
+            type="number"
+            name="year"
+            placeholder="Năm"
+            value={newBook.year}
+            onChange={handleChange}
+            className="border p-2 rounded"
+          />
+        </div>
+        <button
+          onClick={handleAddBook}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
         >
-          <option value="Tất cả">Tất cả</option>
-          <option value="Văn học">Văn học</option>
-          <option value="Văn học thiếu nhi">Văn học thiếu nhi</option>
-          <option value="Văn học hiện thực">Văn học hiện thực</option>
-          <option value="Kỹ năng sống">Kỹ năng sống</option>
-          <option value="Tâm lý">Tâm lý</option>
-          <option value="Khoa học">Khoa học</option>
-          <option value="Công nghệ">Công nghệ</option>
-        </select>
+          Thêm sách
+        </button>
       </div>
 
-      <h2 className="text-xl font-semibold mb-3">{newBook.id ? "Chỉnh sửa sách" : "Thêm sách mới"}</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 mb-4">
-        <input
-          type="text"
-          name="title"
-          placeholder="Tên sách"
-          value={newBook.title}
-          onChange={handleChange}
-          className="border p-2 rounded"
-        />
-        <input
-          type="text"
-          name="author"
-          placeholder="Tác giả"
-          value={newBook.author}
-          onChange={handleChange}
-          className="border p-2 rounded"
-        />
-        <input
-          type="text"
-          name="genre"
-          placeholder="Thể loại"
-          value={newBook.genre}
-          onChange={handleChange}
-          className="border p-2 rounded"
-        />
-        <input
-          type="number"
-          name="year"
-          placeholder="Năm"
-          value={newBook.year}
-          onChange={handleChange}
-          className="border p-2 rounded"
-        />
+      {/* Book list */}
+      <div className="bg-white p-4 rounded shadow">
+        <h2 className="text-xl font-semibold mb-3">📚 Danh sách sách</h2>
+        <p className="mb-2 text-gray-600">Tổng số sách: <strong>{filteredBooks.length}</strong></p>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-gray-200">
+                <th className="p-2">Tên sách</th>
+                <th className="p-2">Tác giả</th>
+                <th className="p-2">Thể loại</th>
+                <th className="p-2">Năm</th>
+                <th className="p-2">Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredBooks.map(book => (
+                <BookItem
+                  key={book.id}
+                  book={book}
+                  onDelete={handleDelete}
+                  onEdit={handleEdit}
+                />
+              ))}
+              {filteredBooks.length === 0 && (
+                <tr>
+                  <td colSpan="5" className="text-center py-4 text-gray-500">Không tìm thấy sách nào.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-      <button
-        onClick={handleAddBook}
-        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mb-6"
-      >
-        {newBook.id ? "Cập nhật" : "Thêm sách"}
-      </button>
-
-      <h2 className="text-xl font-semibold mb-2">Danh sách sách</h2>
-      <p className="mb-2 text-gray-600">Tổng số sách: <strong>{filteredBooks.length}</strong></p>
-
-      <table className="w-full text-left border-collapse">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="p-2">Tên sách</th>
-            <th className="p-2">Tác giả</th>
-            <th className="p-2">Thể loại</th>
-            <th className="p-2">Năm</th>
-            <th className="p-2">Hành động</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredBooks.map(book => (
-            <BookItem
-              key={book.id}
-              book={book}
-              onDelete={handleDelete}
-              onEdit={handleEdit}
-            />
-          ))}
-          {filteredBooks.length === 0 && (
-            <tr>
-              <td colSpan="5" className="text-center py-4 text-gray-500">
-                Không tìm thấy sách nào.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
     </div>
   )
 }

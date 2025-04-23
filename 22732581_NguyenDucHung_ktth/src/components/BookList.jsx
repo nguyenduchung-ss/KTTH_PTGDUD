@@ -9,12 +9,79 @@ const initialBooks = [
 const BookList = () => {
   const [books, setBooks] = useState(initialBooks)
 
+  const [newBook, setNewBook] = useState({
+    title: '',
+    author: '',
+    genre: '',
+    year: ''
+  })
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setNewBook(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleAddBook = () => {
+    if (!newBook.title || !newBook.author || !newBook.genre || !newBook.year) {
+      alert("Vui lòng nhập đầy đủ thông tin!")
+      return
+    }
+
+    const newId = books.length > 0 ? books[books.length - 1].id + 1 : 1
+    const bookToAdd = { ...newBook, id: newId, year: parseInt(newBook.year) }
+    setBooks(prev => [...prev, bookToAdd])
+    setNewBook({ title: '', author: '', genre: '', year: '' }) // reset form
+  }
+
   const handleDelete = (id) => {
     setBooks(books.filter(book => book.id !== id))
   }
 
   return (
     <div className="bg-white shadow-md rounded p-4">
+      <h2 className="text-lg font-semibold mb-3">Thêm sách mới</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 mb-4">
+        <input
+          type="text"
+          name="title"
+          placeholder="Tên sách"
+          value={newBook.title}
+          onChange={handleChange}
+          className="border p-2 rounded"
+        />
+        <input
+          type="text"
+          name="author"
+          placeholder="Tác giả"
+          value={newBook.author}
+          onChange={handleChange}
+          className="border p-2 rounded"
+        />
+        <input
+          type="text"
+          name="genre"
+          placeholder="Thể loại"
+          value={newBook.genre}
+          onChange={handleChange}
+          className="border p-2 rounded"
+        />
+        <input
+          type="number"
+          name="year"
+          placeholder="Năm"
+          value={newBook.year}
+          onChange={handleChange}
+          className="border p-2 rounded"
+        />
+      </div>
+      <button
+        onClick={handleAddBook}
+        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mb-6"
+      >
+        Thêm sách
+      </button>
+
+      <h2 className="text-lg font-semibold mb-2">Danh sách sách</h2>
       <table className="w-full text-left border-collapse">
         <thead>
           <tr className="bg-gray-200">
@@ -33,8 +100,8 @@ const BookList = () => {
               <td className="p-2">{book.genre}</td>
               <td className="p-2">{book.year}</td>
               <td className="p-2">
-                <button 
-                  onClick={() => handleDelete(book.id)} 
+                <button
+                  onClick={() => handleDelete(book.id)}
                   className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
                 >
                   Xoá

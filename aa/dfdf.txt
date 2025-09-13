@@ -1,5 +1,5 @@
-import React from "react";
-import {View, Text, FlatList, TouchableOpaciy, StyleSheet} from "react-native";
+import React, {useState} from "react";
+import {View, Text, FlatList, TouchableOpacity, StyleSheet} from "react-native";
 
 const products = [
   {id : "1", name: "sach Toan", price: 500},
@@ -9,20 +9,32 @@ const products = [
 ]
 
 export default function App() {
+  const [cart, setCart] = useState([]);
+
+  const addToCart = (product) => {
+    setCart([...cart, product]);
+  };
+
+  const totalPrice = cart.reduce((sum, item) => sum + item.price, 0)
+
    const renderItem = ({ item }) => (
       <View style={styles.item}>
       <View>
         <Text style={styles.name}>{item.name}</Text>
         <Text style={styles.price}>{item.price.toLocaleString("vi-VN")} đ</Text>
       </View>
-      <TouchableOpaciy style= {styles.button}>
+      <TouchableOpacity style= {styles.button}>
       <Text style={styles.buttonText}>Thêm vào giỏ</Text>
-      </TouchableOpaciy>
+      </TouchableOpacity>
     </View>
    );
   return (
    <View style={styles.container}>
       <Text style={styles.header}>Danh sách sản phẩm</Text>
+    <View style= {styles.cartInfo}>
+      <Text style = { styles.cartText}> {cart.length} sản phẩm </Text>
+      <Text style = { styles.cartText}> Tổng tiền: {totalPrice.toLocaleString("vi-VN")} đ</Text>
+    </View>
       <FlatList 
       data= {products}
       renderItem = {renderItem}
@@ -40,9 +52,19 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize : 20,
-    fontWeight: "Bold",
+    fontWeight: "bold",
     marginBottom: 12,
     textAlign: "center",
+  },
+  cartInfo: {
+    backgroundColor: "#fff",
+    padding: 10,
+    elevation: 2,
+  },
+  cartText:{
+    fontSize: 16,
+    fontWeight: " 500",
+    marginBottom: 4,
   },
   item: {
     flexDirection: "row",
@@ -68,6 +90,6 @@ const styles = StyleSheet.create({
   buttonText:{
     color: "#fff",
     fontSize: 14,
-    fontWeight:"Bold",
+    fontWeight:"bold",
   }
 });
